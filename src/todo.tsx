@@ -5,6 +5,8 @@ import React, { useState } from 'react';
 type Todo = {
   content: string;
   readonly id: number;
+  completed_flg: boolean; // 今回の追加
+  delete_flg: boolean,  // <-- 追加
 };
 
 
@@ -24,6 +26,9 @@ const Todo: React.FC = () => {
     const newTodo: Todo = {
       content: text, // text ステートの値を content プロパティへ
       id: nextId,
+      // 初期値は false
+      completed_flg: false,
+      delete_flg: false, // <-- 追加
     };
 
     /**
@@ -60,36 +65,67 @@ const Todo: React.FC = () => {
     });
   };
 
-  console.log('=== Original todos ===');
-  todos.map((todo) => {
-  console.log(`id: ${todo.id}, content: ${todo.content}`);
-  });
+  const handleCheck = (id: number, completed_flg: boolean) => {
+    setTodos((todos) => {
+      const newTodos = todos.map((todo) => {
+        if (todo.id === id) {
+          return { ...todo, completed_flg };
+        }
+        return todo;
+      });
 
-  return (
-    <div>
-      <form
-        onSubmit={(e) => {
-          e.preventDefault(); // フォームのデフォルト動作を防ぐ
-          handleSubmit(); // handleSubmit 関数を呼び出す
-        }}
-      >
-        <input
-          type="text"
-          value={text} // フォームの入力値をステートにバインド
-          onChange={(e) => setText(e.target.value)} // 入力値が変わった時にステートを更新
-        />
-        <input type="submit" content="追加" /> {/* ボタンをクリックしてもonSubmitをトリガーしない */}
-      </form>
+      return newTodos;
+    });
+  };
 
+  const handleRemove = (id: number, delete_flg: boolean) => {
+    setTodos((todos) => {
+      const newTodos = todos.map((todo) => {
+        if (todo.id === id) {
+          return { ...todo, delete_flg };
+        }
+        return todo;
+      });
+
+
+      return newTodos;
+    });
+  };
+
+return (
+  <div>
+    <form
+      onSubmit={(e) => {
+        e.preventDefault(); // フォームのデフォルト動作を防ぐ
+        handleSubmit(); // handleSubmit 関数を呼び出す
+      }}
+    >
+      <input
+        type="text"
+        value={text} // フォームの入力値をステートにバインド
+        onChange={(e) => setText(e.target.value)} // 入力値が変わった時にステートを更新
+      />
+      <button type="submit">追加</button> {/* ボタンをクリックしてもonSubmitをトリガーしない */}
+    </form>
       <ul>
         {todos.map((todo) => {
           return (
             <li key={todo.id}>
               <input
+                type="checkbox"
+                checked={todo.completed_flg}
+                // 呼び出し側で checked フラグを反転させる
+                onChange={() => handleCheck(todo.id, !todo.completed_flg)}
+              />
+              <input
                 type="text"
                 value={todo.content}
+                disabled={todo.completed_flg}
                 onChange={(e) => handleEdit(todo.id, e.target.value)}
               />
+              <button onClick={() => handleRemove(todo.id, !todo.delete_flg)}>
+                {todo.delete_flg ? '復元' : '削除'}
+              </button>
             </li>
           );
         })}
