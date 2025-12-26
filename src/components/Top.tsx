@@ -12,7 +12,7 @@ const Top = () => {
 
 
   return (
-    <div>
+    <div className="top-page">
       <h1>トップページ</h1>
       <button onClick={goToTodos}>
         Todoリストへ

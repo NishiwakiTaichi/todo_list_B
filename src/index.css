@@ -85,3 +85,11 @@ button.insert-btn:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+/* Topページ用 */
+.top-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* 横方向の中央寄せ */
+  gap: 16px;           /* 見出しとボタンの間隔 */
+}
